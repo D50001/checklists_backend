@@ -25,3 +25,8 @@ services:
 
 volumes:
   db_data:
+
+networks:
+  photo_registry:
+    name: photo_registry
+    external: true

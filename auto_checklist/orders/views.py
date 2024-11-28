@@ -10,6 +10,7 @@ from .serializers import (
     CarOrderSerializer,
 )
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -40,6 +41,8 @@ class CreateCarOrderAPIView(APIView):
             data = json.loads(request.body)
 
         logger.info(data)
+
         serializer = self.serializer(data=data)
+
         if serializer.is_valid(raise_exception=True):
             return Response({"ok": True}, status=status.HTTP_201_CREATED)
