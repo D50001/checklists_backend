@@ -6,6 +6,7 @@ class CheckInline(admin.TabularInline):
     model = Check
     extra = 0
 
+
 class ElementAdmin(admin.ModelAdmin):
     list_display = ["element"]
 
