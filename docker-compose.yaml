@@ -3,8 +3,6 @@ services:
     build: .
     ports:
       - "8011:8000"
-    volumes:
-      - .:/app
     env_file:
       - .env
     command: sh -c "chmod +x ./docker/app.sh && ./docker/app.sh"
