@@ -28,5 +28,5 @@ volumes:
 
 networks:
   photo_registry:
-    name: photo_registry
+    name: photo_registry_photo_registry
     external: true
