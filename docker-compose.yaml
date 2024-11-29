@@ -1,5 +1,5 @@
 services:
-  сhecklist-backend:
+  backend:
     build: .
     ports:
       - "8011:8001"

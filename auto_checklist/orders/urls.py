@@ -5,5 +5,5 @@ from .views import (
 
 
 urlpatterns = [
-    path("order_car/", CreateCarOrderAPIView.as_view(), name="create_car_order"),
+    path("checklist_order_car/", CreateCarOrderAPIView.as_view(), name="create_car_order"),
 ]
