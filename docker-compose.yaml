@@ -2,7 +2,7 @@ services:
   backend:
     build: .
     ports:
-      - "8011:8000"
+      - "8011:8001"
     volumes:
       - .:/app
     env_file:
@@ -10,6 +10,8 @@ services:
     command: sh -c "chmod +x ./docker/app.sh && ./docker/app.sh"
     depends_on:
       - db
+    networks:
+      - photo_registry_photo_registry
 
 
   db:
@@ -21,6 +23,8 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - db_data:/var/lib/postgresql/data/
+    networks:
+      - photo_registry_photo_registry
 
 
 volumes:
