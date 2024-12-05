@@ -1,7 +1,15 @@
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
-from .models import Element, Check
-from .serializers import ElementSerializer, CheckSerializer
+from .models import (
+    Element,
+    Check,
+    Category
+)
+from .serializers import (
+    ElementSerializer,
+    CheckSerializer,
+    CategorySerializer
+)
 
 
 class ElementsListAPIView(ListAPIView):
@@ -14,3 +22,11 @@ class CheckCreateAPIView(CreateAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = Check.objects.all()
     serializer_class = CheckSerializer
+
+
+class CategoryListView(ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+

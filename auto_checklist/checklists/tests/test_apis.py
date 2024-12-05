@@ -1,7 +1,7 @@
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from django.contrib.auth import get_user_model
-from ..models import Element
+from ..models import Element, Category
 
 
 User = get_user_model()
@@ -44,6 +44,35 @@ class ElementsListAPIViewTest(APITestCase):
         self.client.force_authenticate(user=self.user)
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-        
+
+
+class CategoryListViewTest(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = User.objects.create(
+            email="test@test.com",
+            username="test_user",
+            password="test_password"
+        )
+        self.category = Category.objects.create(title="BRAKES")
+        self.url = "/api/categories/"
+
+    def test_retrieve_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(len(response.data), Category.objects.all().count())
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data[0].get("id"), self.category.id)
+
+    def test_error_unauthorized(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_error_invalid_method(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
 
     

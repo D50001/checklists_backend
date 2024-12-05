@@ -2,12 +2,43 @@ from django.db import models
 from orders.models import Order
 
 
+class Category(models.Model):
+    CATEGORIES = (
+        ("ENGINE", "ДВС"),
+        ("LIGHTING", "Свет"),
+        ("SUSPENSION", "Подвеска"),
+        ("BRAKES", "Тормоза"),
+        ("EXHAUST", "Выхлоп")
+    )
+
+    title = models.CharField(choices=CATEGORIES)
+
+    @property
+    def readable_title(self) -> str:
+        return dict(self.CATEGORIES).get(self.title, self.title)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
+
+
 class Element(models.Model):
 
     element = models.CharField(
-        max_length=32, # max lenght to process to telegram callback query
+        max_length=32, # max length to process to telegram callback query
         unique=True
         )
+    description = models.TextField(blank=True, null=True)
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="elements"
+    )
 
     def __str__(self):
         return self.element
@@ -19,8 +50,10 @@ class Element(models.Model):
 
 class Check(models.Model):
     STATES = (
-        ("OK", "Ремонт не требуется"),
-        ("NOT_OK", "Требуется ремонт")
+        ("OK", "Исправно"),
+        ("NOT_OK", "Несправно, некритическое состояние"),
+        ("CRITICAL", "Неисправно, критическое состояние"),
+        ("ABSENCE", "Отсутствует")
     )
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
     element = models.ForeignKey(Element, on_delete=models.CASCADE)

@@ -1,5 +1,5 @@
-from rest_framework.serializers import ModelSerializer
-from .models import Element, Check
+from rest_framework.serializers import ModelSerializer, ReadOnlyField
+from .models import Element, Check, Category
 
 
 class ElementSerializer(ModelSerializer):
@@ -12,3 +12,10 @@ class CheckSerializer(ModelSerializer):
     class Meta:
         model = Check
         fields = "__all__"
+
+
+class CategorySerializer(ModelSerializer):
+    readable_title = ReadOnlyField()
+    class Meta:
+        model = Category
+        fields = ["id", "title", "readable_title"]
