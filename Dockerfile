@@ -1,12 +1,10 @@
-FROM python:3.11-slim
-
-RUN apt update && apt upgrade -y
+FROM python:3.11-alpine
 
 ARG UID=1000
 ARG GID=1000
 
-#RUN groupadd -g ${GID} prod && useradd -rms /bin/bash -u ${UID} -g ${UID} prod && chmod 777 /opt /run
-RUN addgroup -g ${GID} prod && adduser -u ${UID} -G prod -s /bin/sh -D prod
+RUN addgroup -g ${GID} prod && \
+    adduser -u ${UID} -G prod -s /bin/sh -D prod
 
 WORKDIR /app
 
