@@ -2,7 +2,9 @@ services:
   backend:
     build: 
       context: .
-    user: "prod"    
+      args:
+        UID: ${DOCKER_UID:-1000}
+        GID: ${DOCKER_GID:-1000}
     ports:
       - "8011:8001"
     volumes:

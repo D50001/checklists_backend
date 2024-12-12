@@ -2,14 +2,18 @@ FROM python:3.11-slim
 
 RUN apt update && apt upgrade -y
 
-RUN groupadd -g 1000 prod && useradd -rms /bin/bash -u 1000 -g 1000 prod && chmod 777 /opt /run
+ARG UID=1000
+ARG GID=1000
+
+#RUN groupadd -g ${GID} prod && useradd -rms /bin/bash -u ${UID} -g ${UID} prod && chmod 777 /opt /run
+RUN addgroup -g ${GID} prod && adduser -u ${UID} -G prod -s /bin/sh -D prod
 
 WORKDIR /app
 
-RUN chown -R prod:prod /app && chmod 755 /app
+RUN chown -R ${GID}:${UID} /app && chmod 755 /app
 
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY --chown=prod:prod auto_checklist/ .
+COPY --chown=${GID}:${UID} auto_checklist/ .
