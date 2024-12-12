@@ -201,16 +201,10 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'default',
         },
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'debug.log'),
-            'formatter': 'default',
-        },
     },
     'loggers': {
         '': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
         }
