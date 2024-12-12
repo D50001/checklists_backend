@@ -1,15 +1,15 @@
-FROM python:3.11
+FROM python:3.11-slim
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+RUN apt update && apt upgrade -y
 
-ARG USER
+RUN groupadd -g 1000 prod && useradd -rms /bin/bash -u 1000 -g 1000 prod && chmod 777 /opt /run
+
 WORKDIR /app
+
+RUN chown -R prod:prod /app && chmod 755 /app
 
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-USER ${USER}
-
-COPY auto_checklist/ .
+COPY --chown=prod:prod auto_checklist/ .

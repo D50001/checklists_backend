@@ -1,5 +1,6 @@
 from django.db import models
-from orders.models import Order
+from orders.models import Order, Car
+from django.utils.html import format_html
 
 
 class Category(models.Model):
@@ -51,13 +52,26 @@ class Element(models.Model):
 class Check(models.Model):
     STATES = (
         ("OK", "Исправно"),
-        ("NOT_OK", "Несправно, некритическое состояние"),
-        ("CRITICAL", "Неисправно, критическое состояние"),
-        ("ABSENCE", "Отсутствует")
+        ("NOT_OK", "Несправно"),
     )
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
     element = models.ForeignKey(Element, on_delete=models.CASCADE)
     state = models.CharField(choices=STATES, default="OK", verbose_name="Состояние")
+    photo = models.ImageField(null=True, blank=True, verbose_name="Фото", upload_to="media/images/")
+
+    def image_tag(self):
+        if self.photo:
+            return format_html('<img src="{}" style="width: 100px; height: auto;" />', self.photo.url)
+        return ""
 
     def __str__(self):
         return self.element.element
+
+
+class Recommendation(models.Model):
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    element = models.ForeignKey(Element, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.element}: обнаружена неисправность."
