@@ -4,18 +4,21 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import RetrieveAPIView, ListAPIView
 import json
 from .serializers import (
     CarOrderSerializer,
+    OrderSerializer
 )
+from .models import Order
+from .paginations import OrderPagination
 
 
 logger = logging.getLogger(__name__)
 
 
 class CreateCarOrderAPIView(APIView):
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated]
     serializer = CarOrderSerializer
 
     def post(self, request):
@@ -24,8 +27,7 @@ class CreateCarOrderAPIView(APIView):
             {
                 "number": "Y-0028",
                 "date": "2024-01-01",
-                "make": "Toyota",
-                "model": "RAV4",
+                "model": "Toyota RAV4",
                 "year": 2023,
                 "vin": "ANY16SYMBOLSVIN",
                 "mileage": 50000,
@@ -46,3 +48,10 @@ class CreateCarOrderAPIView(APIView):
 
         if serializer.is_valid(raise_exception=True):
             return Response({"ok": True}, status=status.HTTP_201_CREATED)
+
+
+class ListOrdersAPIView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = OrderSerializer
+    queryset = Order.objects.all()
+    pagination_class = OrderPagination

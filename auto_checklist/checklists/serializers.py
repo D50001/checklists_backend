@@ -35,6 +35,7 @@ class CheckSerializer(ModelSerializer):
 
 class CategorySerializer(ModelSerializer):
     readable_title = ReadOnlyField()
+
     class Meta:
         model = Category
         fields = ["id", "title", "readable_title"]

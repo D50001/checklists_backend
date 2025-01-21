@@ -1,0 +1,382 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Gelikon Checklists Storage API",
+        "description": "Gelikon Checklists Storage",
+        "termsOfService": "https://www.google.com/policies/terms/",
+        "contact": {
+            "email": "kurkuzo@gmail.com"
+        },
+        "license": {
+            "name": "BSD License"
+        },
+        "version": "v1"
+    },
+    "host": "127.0.0.1:8001",
+    "schemes": [
+        "http"
+    ],
+    "basePath": "/api",
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "securityDefinitions": {
+        "Basic": {
+            "type": "basic"
+        }
+    },
+    "security": [
+        {
+            "Basic": []
+        }
+    ],
+    "paths": {
+        "/accounts/refresh/": {
+            "post": {
+                "operationId": "accounts_refresh_create",
+                "description": "Takes a refresh type JSON web token and returns an access type JSON web\ntoken if the refresh token is valid.",
+                "parameters": [
+                    {
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/TokenRefresh"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/TokenRefresh"
+                        }
+                    }
+                },
+                "tags": [
+                    "accounts"
+                ]
+            },
+            "parameters": []
+        },
+        "/accounts/register/": {
+            "post": {
+                "operationId": "accounts_register_create",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Registration"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/Registration"
+                        }
+                    }
+                },
+                "tags": [
+                    "accounts"
+                ]
+            },
+            "parameters": []
+        },
+        "/accounts/token/": {
+            "post": {
+                "operationId": "accounts_token_create",
+                "description": "Takes a set of user credentials and returns an access and refresh JSON web\ntoken pair to prove the authentication of those credentials.",
+                "parameters": [
+                    {
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/TokenObtainPair"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/TokenObtainPair"
+                        }
+                    }
+                },
+                "tags": [
+                    "accounts"
+                ]
+            },
+            "parameters": []
+        },
+        "/categories/": {
+            "get": {
+                "operationId": "categories_list",
+                "description": "",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Category"
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "categories"
+                ]
+            },
+            "parameters": []
+        },
+        "/checklist_order_car/": {
+            "post": {
+                "operationId": "checklist_order_car_create",
+                "description": "Structure of request:\n    {\n        \"number\": \"Y-0028\",\n        \"date\": \"2024-01-01\",\n        \"model\": \"Toyota RAV4\",\n        \"year\": 2023,\n        \"vin\": \"ANY16SYMBOLSVIN\",\n        \"mileage\": 50000,\n        \"license_number\": \"A444XX777\",\n        \"department\": \"Полтавская\"\n    }",
+                "parameters": [],
+                "responses": {
+                    "201": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "checklist_order_car"
+                ]
+            },
+            "parameters": []
+        },
+        "/checks/": {
+            "post": {
+                "operationId": "checks_create",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Check"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/Check"
+                        }
+                    }
+                },
+                "tags": [
+                    "checks"
+                ]
+            },
+            "parameters": []
+        },
+        "/elements/": {
+            "get": {
+                "operationId": "elements_list",
+                "description": "",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Element"
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "elements"
+                ]
+            },
+            "parameters": []
+        }
+    },
+    "definitions": {
+        "TokenRefresh": {
+            "required": [
+                "refresh"
+            ],
+            "type": "object",
+            "properties": {
+                "refresh": {
+                    "title": "Refresh",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "access": {
+                    "title": "Access",
+                    "type": "string",
+                    "readOnly": true,
+                    "minLength": 1
+                }
+            }
+        },
+        "Registration": {
+            "required": [
+                "username",
+                "password",
+                "email"
+            ],
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "ID",
+                    "type": "integer",
+                    "readOnly": true
+                },
+                "username": {
+                    "title": "Имя пользователя",
+                    "description": "Обязательное поле. Не более 150 символов. Только буквы, цифры и символы @/./+/-/_.",
+                    "type": "string",
+                    "pattern": "^[\\w.@+-]+$",
+                    "maxLength": 150,
+                    "minLength": 1
+                },
+                "password": {
+                    "title": "Пароль",
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1
+                },
+                "email": {
+                    "title": "Email",
+                    "type": "string",
+                    "format": "email",
+                    "maxLength": 254,
+                    "minLength": 1
+                }
+            }
+        },
+        "TokenObtainPair": {
+            "required": [
+                "username",
+                "password"
+            ],
+            "type": "object",
+            "properties": {
+                "username": {
+                    "title": "Username",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "password": {
+                    "title": "Password",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "Category": {
+            "required": [
+                "title"
+            ],
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "ID",
+                    "type": "integer",
+                    "readOnly": true
+                },
+                "title": {
+                    "title": "Title",
+                    "type": "string",
+                    "enum": [
+                        "ENGINE",
+                        "LIGHTING",
+                        "SUSPENSION",
+                        "BRAKES",
+                        "EXHAUST"
+                    ]
+                },
+                "readable_title": {
+                    "title": "Readable title",
+                    "type": "string",
+                    "readOnly": true
+                }
+            }
+        },
+        "Check": {
+            "required": [
+                "order",
+                "element"
+            ],
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "ID",
+                    "type": "integer",
+                    "readOnly": true
+                },
+                "state": {
+                    "title": "Состояние",
+                    "type": "string",
+                    "enum": [
+                        "OK",
+                        "NOT_OK"
+                    ]
+                },
+                "photo": {
+                    "title": "Фото",
+                    "type": "string",
+                    "readOnly": true,
+                    "x-nullable": true,
+                    "format": "uri"
+                },
+                "order": {
+                    "title": "Order",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "element": {
+                    "title": "Element",
+                    "type": "integer"
+                }
+            }
+        },
+        "Element": {
+            "required": [
+                "element"
+            ],
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "ID",
+                    "type": "integer",
+                    "readOnly": true
+                },
+                "element": {
+                    "title": "Element",
+                    "type": "string",
+                    "maxLength": 32,
+                    "minLength": 1
+                },
+                "description": {
+                    "title": "Description",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "category": {
+                    "title": "Category",
+                    "type": "integer",
+                    "x-nullable": true
+                }
+            }
+        }
+    }
+}

@@ -7,6 +7,7 @@ from PIL import Image
 from uuid import UUID
 from django.core.files.base import ContentFile
 from io import BytesIO
+from ..models import Check
 
 
 User = get_user_model()
@@ -162,5 +163,93 @@ class CategoryListViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
+class CheckMultipleCreateAPITest(APITestCase):
+    def setUp(self):
+        self.department = Department.objects.create(title="test_department", telegram_chat_id=111111111111)
+        self.car = Car.objects.create(
+            model="Toyota Camry",
+            vin="ANY16SYMBOLSVIN",
+        )
+        self.order = Order.objects.create(
+            number="A11101",
+            date="2024-01-01",
+            car=self.car,
+            department=self.department
+        )
+        self.user = User.objects.create(
+            email="test@test.com",
+            username="test_user",
+            password="test_password"
+        )
+        self.element1 = Element.objects.create(element="Передние тормозные колодки")
+        self.element2 = Element.objects.create(element="Передние тормозные диски")
+        self.url = "/api/multicheks/" 
 
-    
+    def test_success(self):
+        self.client.force_authenticate(user=self.user)
+        payload = [
+            {
+            "order": self.order.id,
+            "element": self.element1.id,
+            "state": "OK"
+            },
+                        {
+            "order": self.order.id,
+            "element": self.element2.id,
+            "state": "NOT_OK"
+            }
+        ]
+        response = self.client.post(self.url, data=payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        count = Check.objects.all().count()
+        self.assertEqual(count, 2)
+
+    def test_error_unauthorized(self):
+        payload = [
+            {
+            "order": self.order.id,
+            "element": self.element1.id,
+            "state": "OK"
+            },
+                        {
+            "order": self.order.id,
+            "element": self.element2.id,
+            "state": "NOT_OK"
+            }
+        ]
+        response = self.client.post(self.url, data=payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_error_invalid_method(self):
+        self.client.force_authenticate(user=self.user)
+        payload = [
+            {
+            "order": self.order.id,
+            "element": self.element1.id,
+            "state": "OK"
+            },
+                        {
+            "order": self.order.id,
+            "element": self.element2.id,
+            "state": "NOT_OK"
+            }
+        ]
+        response = self.client.patch(self.url, data=payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+                         
+    def test_error_invalid_payload(self):
+        self.client.force_authenticate(user=self.user)
+        payload = [
+            {
+            "order": self.order.id,
+            "state": "OK"
+                    },
+                        {
+            "order": self.order.id,
+            "element": self.element2.id,
+            "state": "NOT_OK"
+            }
+        ]
+        response = self.client.post(self.url, data=payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(Check.objects.all().count(), 0)

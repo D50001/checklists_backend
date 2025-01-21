@@ -56,3 +56,17 @@ class CarOrderSerializer(Serializer):
         telegram_api = TelegramNotificator()
         telegram_api.send_order_notification(attrs, order_id)
         return attrs
+    
+
+class CarSerializer(ModelSerializer):
+    class Meta:
+        model = Car
+        fields = "__all__"
+
+
+class OrderSerializer(ModelSerializer):
+    car = CarSerializer()
+    
+    class Meta:
+        model = Order
+        fields = "__all__"
