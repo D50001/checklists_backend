@@ -4,19 +4,8 @@ from django.utils.html import format_html
 
 
 class Category(models.Model):
-    CATEGORIES = (
-        ("ENGINE", "ДВС"),
-        ("LIGHTING", "Свет"),
-        ("SUSPENSION", "Подвеска"),
-        ("BRAKES", "Тормоза"),
-        ("EXHAUST", "Выхлоп")
-    )
 
-    title = models.CharField(choices=CATEGORIES)
-
-    @property
-    def readable_title(self) -> str:
-        return dict(self.CATEGORIES).get(self.title, self.title)
+    title = models.CharField(max_length=32) # max length to process to telegram callback query
 
     def __str__(self):
         return self.title
