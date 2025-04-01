@@ -42,6 +42,7 @@ class Check(models.Model):
     STATES = (
         ("OK", "Исправно"),
         ("NOT_OK", "Несправно"),
+        ("NOT_EQUIPPED", "Не оснащено")
     )
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
     element = models.ForeignKey(Element, on_delete=models.CASCADE)
