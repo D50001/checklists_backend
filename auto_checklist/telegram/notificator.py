@@ -47,6 +47,12 @@ class TelegramNotificator:
                         "text": "Чеклист для автомобиля",
                         "callback_data": f"auto:{order_id}:{license_number}"
                     }
+                ],
+                [
+                    {
+                        "text": "Быстрый чеклист",
+                        "callback_data": f"fast:{order_id}:{license_number}"
+                    }
                 ]
             ]
         }
