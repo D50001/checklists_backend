@@ -1,7 +1,7 @@
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from django.contrib.auth import get_user_model
-from ..models import Element, Category
+from ..models import Element, Category, SubCategory
 from orders.models import Department, Car, Order
 from PIL import Image
 from uuid import UUID
@@ -21,12 +21,22 @@ class ElementsListAPIViewTest(APITestCase):
             username="test_user",
             password="test_password"
         )
-        self.element = Element.objects.create(element="Передние тормозные колодки")
+
+        self.category = Category.objects.create(title="Тормозная система")
+        self.subcategory = SubCategory.objects.create(
+            category=self.category,
+            title="Передние тормозные колодки"
+        )
+        self.element = Element.objects.create(
+            element="Передние тормозные колодки левые",
+            category=self.category,
+            sub_category=self.subcategory
+            )
         self.url = "/api/elements/"
         self.client = APIClient()
 
-    def create_element(self):
-        Element.objects.create(element="Задние тормозные колодки")
+    def create_test_data(self):
+        Element.objects.create(element="Задние тормозные колодки левые")
 
     def test_success_one_item(self):
         self.client.force_authenticate(user=self.user)
@@ -36,11 +46,29 @@ class ElementsListAPIViewTest(APITestCase):
         self.assertEqual(len(response.data), elements_count)
 
     def test_success_two_items(self):
-        self.create_element()
+        self.create_test_data()
         self.client.force_authenticate(user=self.user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         elements_count = Element.objects.all().count()
+        self.assertEqual(len(response.data), elements_count)
+
+    def test_success_category_param(self):
+        self.create_test_data()
+        self.client.force_authenticate(user=self.user)
+        params = {"category": self.category.id}
+        response = self.client.get(self.url, data=params)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        elements_count = 1
+        self.assertEqual(len(response.data), elements_count)
+
+    def test_success_subcategory_param(self):
+        self.create_test_data()
+        self.client.force_authenticate(user=self.user)
+        params = {"subcategory": self.subcategory.id}
+        response = self.client.get(self.url, data=params)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        elements_count = 1
         self.assertEqual(len(response.data), elements_count)
 
     def test_error_unauthorized(self):

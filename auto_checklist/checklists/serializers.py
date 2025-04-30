@@ -3,7 +3,8 @@ from .models import (
     Element,
     Check,
     Category,
-    Recommendation
+    Recommendation,
+    SubCategory
 )
 
 
@@ -39,3 +40,9 @@ class CategorySerializer(ModelSerializer):
     class Meta:
         model = Category
         fields = ["id", "title", "readable_title"]
+
+
+class SubCategorySerializer(ModelSerializer):
+    class Meta:
+        model = SubCategory
+        fields = "__all__"

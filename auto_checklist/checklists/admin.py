@@ -3,6 +3,7 @@ from .models import (
     Element,
     Check,
     Category,
+    SubCategory,
     Recommendation
 )
 
@@ -15,6 +16,10 @@ class CheckInline(admin.TabularInline):
 
 class ElementAdmin(admin.ModelAdmin):
     list_display = ["element"]
+
+
+class SubCategoryAdmin(admin.ModelAdmin):
+    list_display = ["title"]
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -32,5 +37,6 @@ class CheckAdmin(admin.ModelAdmin):
 
 admin.site.register(Element, ElementAdmin)
 admin.site.register(Category, CategoryAdmin)
+admin.site.register(SubCategory, SubCategoryAdmin)
 admin.site.register(Recommendation, RecommendationAdmin)
 admin.site.register(Check, CheckAdmin)

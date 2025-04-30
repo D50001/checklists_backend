@@ -6,12 +6,14 @@ from rest_framework import status
 from .models import (
     Element,
     Check,
-    Category
+    Category,
+    SubCategory
 )
 from .serializers import (
     ElementSerializer,
     CheckSerializer,
-    CategorySerializer
+    CategorySerializer,
+    SubCategorySerializer
 )
 
 
@@ -19,6 +21,18 @@ class ElementsListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = Element.objects.all()
     serializer_class = ElementSerializer
+
+    def get_queryset(self):
+        category_id = self.request.query_params.get("category")
+        subcategory_id = self.request.query_params.get("subcategory")
+        queryset = super().get_queryset()
+
+        if category_id:
+            queryset = queryset.filter(category=category_id)
+        if subcategory_id:
+            queryset = queryset.filter(sub_category=subcategory_id)
+        
+        return queryset
 
 
 class CheckCreateAPIView(CreateAPIView):
@@ -62,3 +76,14 @@ class CategoryListView(ListAPIView):
     serializer_class = CategorySerializer
 
 
+class SubCategoryListView(ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    queryset = SubCategory.objects.all()
+    serializer_class = SubCategorySerializer
+
+    def get_queryset(self):
+        category_id = self.request.query_params.get("category")
+        print(category_id)
+        if category_id:
+            return super().get_queryset().filter(category=category_id)
+        return super().get_queryset()

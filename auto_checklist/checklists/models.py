@@ -15,6 +15,19 @@ class Category(models.Model):
         verbose_name_plural = "Категории"
 
 
+class SubCategory(models.Model):
+
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    title = models.CharField(max_length=32) # max length to process to telegram callback query
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = "Подкатегория"
+        verbose_name_plural = "Подкатегории"
+
+
 class Element(models.Model):
 
     element = models.CharField(
@@ -22,6 +35,13 @@ class Element(models.Model):
         unique=True
         )
     description = models.TextField(blank=True, null=True)
+    sub_category = models.ForeignKey(
+        SubCategory,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="elements"
+    )
     category = models.ForeignKey(
         Category,
         on_delete=models.PROTECT,
