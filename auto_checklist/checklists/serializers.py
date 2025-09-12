@@ -1,4 +1,5 @@
-from rest_framework.serializers import ModelSerializer, ReadOnlyField
+from rest_framework.fields import SerializerMethodField, IntegerField, UUIDField, FileField
+from rest_framework.serializers import ModelSerializer, ReadOnlyField, Serializer
 from .models import (
     Element,
     Check,
@@ -15,6 +16,7 @@ class ElementSerializer(ModelSerializer):
 
 
 class CheckSerializer(ModelSerializer):
+
     class Meta:
         model = Check
         fields = "__all__"
@@ -46,3 +48,23 @@ class SubCategorySerializer(ModelSerializer):
     class Meta:
         model = SubCategory
         fields = "__all__"
+
+
+class SubcategoryExtendedSerializer(ModelSerializer):
+    elements = ElementSerializer(many=True, read_only=True)
+    class Meta:
+        model = SubCategory
+        fields = "__all__"
+
+
+class CategoryExtendedSerializer(ModelSerializer):
+    subcategories = SubcategoryExtendedSerializer(many=True, read_only=True)
+    class Meta:
+        model = Category
+        fields = "__all__"
+
+
+class CommentSerializer(Serializer):
+    element = IntegerField()
+    order = UUIDField()
+    voice_message = FileField()

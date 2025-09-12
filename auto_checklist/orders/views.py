@@ -1,7 +1,8 @@
+import datetime
 import logging
 
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView, ListAPIView
@@ -12,7 +13,7 @@ from .serializers import (
 )
 from .models import Order
 from .paginations import OrderPagination
-
+from .services import get_filtered_orders
 
 logger = logging.getLogger(__name__)
 
@@ -53,5 +54,13 @@ class CreateCarOrderAPIView(APIView):
 class ListOrdersAPIView(ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = OrderSerializer
-    queryset = Order.objects.all()
     pagination_class = OrderPagination
+
+    def get_queryset(self):
+        return get_filtered_orders()
+
+
+class OrderDetailAPIView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = OrderSerializer
+    queryset = Order.objects.all()

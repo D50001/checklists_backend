@@ -31,7 +31,7 @@ class RecommendationAdmin(admin.ModelAdmin):
 
 
 class CheckAdmin(admin.ModelAdmin):
-    list_display = ['order', 'element', 'state', 'image_tag']
+    list_display = ['order', 'element', 'state', 'comment', 'image_tag']
     readonly_fields = ['image_tag']
 
 

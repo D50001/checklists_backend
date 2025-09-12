@@ -17,7 +17,7 @@ class Category(models.Model):
 
 class SubCategory(models.Model):
 
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="subcategories")
     title = models.CharField(max_length=32) # max length to process to telegram callback query
 
     def __str__(self):
@@ -64,18 +64,16 @@ class Check(models.Model):
         ("NOT_OK", "Несправно"),
         ("NOT_EQUIPPED", "Не оснащено")
     )
-    order = models.ForeignKey(Order, on_delete=models.PROTECT)
-    element = models.ForeignKey(Element, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name="checks")
+    element = models.ForeignKey(Element, on_delete=models.CASCADE, related_name="checks")
     state = models.CharField(choices=STATES, default="OK", verbose_name="Состояние")
     photo = models.ImageField(null=True, blank=True, verbose_name="Фото", upload_to="media/images/")
+    comment = models.TextField(null=True, blank=True, verbose_name="Комментарий")
 
     def image_tag(self):
         if self.photo:
             return format_html('<img src="{}" style="width: 100px; height: auto;" />', self.photo.url)
         return ""
-
-    def __str__(self):
-        return self.element.element
 
 
 class Recommendation(models.Model):
