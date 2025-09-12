@@ -1,4 +1,5 @@
 from rest_framework.exceptions import ValidationError
+from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import (
     Serializer,
     ModelSerializer,
@@ -8,6 +9,9 @@ from rest_framework.serializers import (
 )
 from .models import Car, Order, Department
 from telegram.notificator import TelegramNotificator
+
+from checklists.serializers import CheckSerializer
+from checklists.models import Element
 
 
 class CarOrderSerializer(Serializer):
@@ -66,7 +70,17 @@ class CarSerializer(ModelSerializer):
 
 class OrderSerializer(ModelSerializer):
     car = CarSerializer()
+    checks = CheckSerializer(many=True)
+    is_closed = SerializerMethodField()
     
     class Meta:
         model = Order
         fields = "__all__"
+
+    def get_is_closed(self, obj):
+        obj_checks = obj.checks.values_list("element__id", flat=True).distinct().count()
+        elements_ids = Element.objects.all().values_list("id", flat=True).distinct().count()
+        #TODO: сделать проверку более надежной
+        return obj_checks == elements_ids
+
+

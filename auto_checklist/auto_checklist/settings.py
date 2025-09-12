@@ -54,6 +54,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -210,3 +211,33 @@ LOGGING = {
         }
     },
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8081",
+    "http://127.0.0.1:8081",
+    "http://localhost:19006",
+    "http://172.30.224.1:8081",
+    "http://192.168.0.104:8081",
+    "http://192.168.0.1:8081",
+    "http://192.168.0.104:8081"
+]
+
+CORS_ALLOW_HEADERS = [
+    'authorization',
+    'content-type',
+    'accept',
+    'origin',
+    'user-agent',
+]
+
+WHISPER_MODEL = os.environ.get("WHISPER_MODEL", "gpt-4o-mini-transcribe")
+OPEN_AI_API_KEY = os.environ.get("OPEN_AI_API_KEY", "")
+
+
+# Celery settings
+CELERY_BROKER_URL = os.environ["CELERY_BROKER_URL"]
+CELERY_RESULT_BACKEND = os.environ["CELERY_BROKER_URL"]
+
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
