@@ -83,7 +83,7 @@ jobs:
         run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd /home/winstonchu/prod/photo_registry/auto_checklist_backend && git pull'
 
       - name: Stop the server
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd /home/winstonchu/prod/auto_checklist_backendp && docker compose -f docker-compose.yaml down'
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd /home/winstonchu/prod/auto_checklist_backend && docker compose -f docker-compose.yaml down'
 
       - name: Start the server
         run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd /home/winstonchu/prod/auto_checklist_backend && docker compose -f docker-compose.yaml up --build -d'
