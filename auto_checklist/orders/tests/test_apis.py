@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework.test import APITestCase, APIClient
 from django.contrib.auth import get_user_model
 from ..models import Order, Department, Car
@@ -29,7 +31,7 @@ class ListOrdersAPITest(APITestCase):
         )
         self.order = Order.objects.create(
             number="A11101",
-            date="2025-01-01",
+            date=datetime.date.today(),
             car=self.car,
             department=self.department
         )
@@ -43,6 +45,19 @@ class ListOrdersAPITest(APITestCase):
             category=self.category,
             sub_category=self.subcategory
             )
+
+    def create_department_and_order(self):
+        department = Department.objects.create(title="test_department1", telegram_chat_id=222222222)
+        car = Car.objects.create(
+            model="Volkswagen Tigian",
+            vin="ANY16SYMBOLSVIN16",
+        )
+        self.order = Order.objects.create(
+            number="A11102",
+            date=datetime.date.today(),
+            car=car,
+            department=department
+        )
 
     def test_success(self):
         self.client.force_authenticate(user=self.user)
@@ -65,6 +80,24 @@ class ListOrdersAPITest(APITestCase):
         response_count = response.data.get("count", 0)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_count, 0)
+
+    def test_success_all_departments(self):
+        self.create_department_and_order()
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        response_count = response.data.get("count", 0)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_count, 2)
+
+    def test_success_user_has_department(self):
+        self.create_department_and_order()
+        self.client.force_authenticate(user=self.user)
+        self.user.department = self.department
+        self.user.save()
+        response = self.client.get(self.url)
+        response_count = response.data.get("count", 0)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_count, 1)
 
     def test_error_unauthorized(self):
         response = self.client.get(self.url)

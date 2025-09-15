@@ -57,7 +57,9 @@ class ListOrdersAPIView(ListAPIView):
     pagination_class = OrderPagination
 
     def get_queryset(self):
-        return get_filtered_orders()
+        department = self.request.user.department
+        return get_filtered_orders(department)
+
 
 
 class OrderDetailAPIView(RetrieveAPIView):
