@@ -52,9 +52,13 @@ class CreateCarOrderAPIView(APIView):
 
 
 class ListOrdersAPIView(ListAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]#[IsAuthenticated]
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
+
+    def get(self, request, *args, **kwargs):
+        logger.info(f"GET ORDERS")
+        logger.warning(request.headers)
 
     def get_queryset(self):
         department = self.request.user.department
