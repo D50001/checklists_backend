@@ -56,11 +56,6 @@ class ListOrdersAPIView(ListAPIView):
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
 
-    def get(self, request, *args, **kwargs):
-        logger.info(f"GET ORDERS")
-        logger.warning(request.headers)
-        return super().get(request, *args, **kwargs)
-
     def get_queryset(self):
         department = self.request.user.department
         return get_filtered_orders(department)
